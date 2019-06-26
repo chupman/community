@@ -1,0 +1,21 @@
+{
+	"regexes": [
+        	'`https://kubernetes-site\.appspot\.com`',
+        	'`https?://[^A-Za-z].*`',
+        	'`https?://localhost.*`',
+        	'`https://www.reddit.com/.*`'
+	],
+	"urls": [
+		"http://github.com/some/repo.git": {},
+		// This URL returns 404 when visited by this tool, but it works fine if visited by a browser.
+		"http://stackoverflow.com/questions/ask?tags=kubernetes":                                            {},
+		"https://github.com/$YOUR_GITHUB_USERNAME/kubernetes.git":                                           {},
+		"https://github.com/$YOUR_GITHUB_USERNAME/kubernetes":                                               {},
+		"http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/darwin/amd64/kubectl": {},
+		// It seems this server expects certain User-Agent value, it works fine with Chrome, but returns 404 if we issue a plain cURL to it.
+		"http://supervisord.org/":         {},
+		"http://kubernetes.io/vX.Y/docs":  {},
+		"http://kubernetes.io/vX.Y/docs/": {},
+		"http://kubernetes.io/vX.Y/":      {},	
+	]
+}

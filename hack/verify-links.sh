@@ -27,11 +27,14 @@ cleanup() {
 trap "cleanup" EXIT SIGINT
 mkdir -p "$OUTPUT"
 
+skipping_file="${KUBE_ROOT}/hack/.link_failures"
+failing_packages=$(echo `cat ${skipping_file}` | sed "s| | -e |g")
 root="$(git rev-parse --show-toplevel)"
 ROOTS=("${root}")
 found_invalid=false
 for root in "${ROOTS[@]}"; do
   linkcheck "--root-dir=${root}" 2> "${OUTPUT}/error" 1> "${OUTPUT}/output" && ret=0 || ret=$?
+  git ls-files | grep -v -e ${failing_packages} | xargs linkcheck -i "" -error -o stderr
   if [[ $ret -eq 1 ]]; then
     found_invalid=true
   fi

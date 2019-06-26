@@ -26,6 +26,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"encoding/json"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -39,6 +40,9 @@ import (
 var (
 	rootDir    = flag.String("root-dir", "", "Root directory containing documents to be processed.")
 	fileSuffix = flag.StringSlice("file-suffix", []string{"types.go", ".md"}, "suffix of files to be checked")
+	whitelistFile = flag.String("whitelist-file", []string{"url"}, "location of whitelisted urls and regexes")
+//	fullURLWhiteList = flag.String("", "", "File with full urls")
+
 	// URLs matching the patterns in the regWhiteList won't be checked. Patterns
 	// of dummy URLs should be added to the list to avoid false alerts. Also,
 	// patterns of URLs that we don't care about can be added here to improve
@@ -48,6 +52,7 @@ var (
 		// skip url that doesn't start with an English alphabet, e.g., URLs with IP addresses.
 		regexp.MustCompile(`https?://[^A-Za-z].*`),
 		regexp.MustCompile(`https?://localhost.*`),
+		regexp.MustCompile(`https://www.reddit.com/.*`),
 	}
 	// URLs listed in the fullURLWhiteList won't be checked. This separated from
 	// the RegWhiteList to improve efficiency. This list includes dummy URLs that
@@ -63,7 +68,7 @@ var (
 		"http://supervisord.org/":         {},
 		"http://kubernetes.io/vX.Y/docs":  {},
 		"http://kubernetes.io/vX.Y/docs/": {},
-		"http://kubernetes.io/vX.Y/":      {},
+		"http://kubernetes.io/vX.Y/":      {},	
 	}
 
 	visitedURLs    = map[string]struct{}{}
